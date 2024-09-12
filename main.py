@@ -5,20 +5,20 @@ import customtkinter
 from src.gui import main_window
 from src.database import db_utils
 
-# Periodo   Maxim  Previsão    Erro  Erro ABS   MAPE
+from src.leitura_e_escrita import ler_arquivo
 
 # Config Inicial
 # Aparencia
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
 
-# Database
+# SETUP Database
 db = db_utils.DatabaseManagement("teste.db")
 db.abrir_conn()
 
-#region  #### TESTE ####
-from src.leitura_e_escrita import ler_arquivo
+#region  #### TESTE - Temp ####
 
+# Tabela - Input
 query1 = """
 CREATE TABLE IF NOT EXISTS dados_input (
     periodo int PRIMARY KEY,
@@ -27,19 +27,22 @@ CREATE TABLE IF NOT EXISTS dados_input (
     maxim float NOT NULL
 );
 """
+db.criar_tabela(query1)
+
+# Tabela - Resultados
 query2 = """
 CREATE TABLE IF NOT EXISTS resultados_maxim (
     periodo int PRIMARY KEY,
-    demanda_real float NOT NULL,
+    demanda_real float,
     previsao_media_movel float,
     erro float,
     erro_abs float,
     mape_previsao float
 );
 """
-db.criar_tabela(query1)
 db.criar_tabela(query2)
 
+# Arquivo input teste para o db
 dados_csv = ler_arquivo.carrega_csv("dados_csv.csv")
 for row in dados_csv.itertuples():
     db.inserir_data(

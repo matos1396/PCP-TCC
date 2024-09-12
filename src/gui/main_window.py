@@ -45,8 +45,8 @@ class App(customtkinter.CTk):
         # self.tabela.grid(sticky="NSEW")
         self.tabview.set_labels(self.dici)
 
-
-        for idx, row in self.df.iterrows():
+        for _idx, row in self.df.iterrows():
+            print(row)
             self.db.inserir_data(
                 """
                 INSERT INTO resultados_maxim (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
@@ -57,13 +57,14 @@ class App(customtkinter.CTk):
                 row.loc["Previsão"],
                 row.loc["Erro"],
                 row.loc["Erro ABS"],
-                row.loc["MAPE"])
+                row.loc["MAPE"]),
+                "resultados_maxim"
             )
 
-        x = self.db.query_data("SELECT * FROM resultados_maxim")
+        # x = self.db.query_data("SELECT * FROM resultados_maxim")
 
-        for row in x:
-            print(row)
+        # for row in x:
+        #     print(row)
 
 
         figura = graficos.gerar_fig_demanda(self.df)

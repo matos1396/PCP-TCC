@@ -53,9 +53,9 @@ def gerar_fig_demanda(df):
 
 def gerar_fig_erro(df, dici):
 
-    # Limite supf e inf 4xMAD
-    limite_sup = pd.Series(data=[4*dici["MAD"]] * (df["Periodo"].count()+1))
-    limite_inf = pd.Series(data=[-4*dici["MAD"]] * (df["Periodo"].count()+1))
+    # Limite supf e inf 4xMAD 
+    limite_sup = pd.Series(data=[4*dici["MAD"]] * (df["Periodo"].count())) # +1
+    limite_inf = pd.Series(data=[-4*dici["MAD"]] * (df["Periodo"].count())) # +1
 
     fig, ax = plt.subplots(clear = True)
 
