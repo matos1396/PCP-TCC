@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "PCP-TCC"
+version = "0.1.0"
+description = ""
+authors = ["Gustavo Costa de Matos"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.14"
+pandas = "^2.2.2"
+customtkinter = "^5.2.2"
+matplotlib = "^3.9.2"
+pyinstaller = "^6.10.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
