@@ -12,13 +12,13 @@ def gerar_df(caminho, n):
     df_dados["Previsão"] = df_dados["Maxim"].rolling(n).mean().shift(1)
     df_dados["Erro"] = df_dados["Maxim"].sub(df_dados["Previsão"])
     df_dados["Erro ABS"] = df_dados["Erro"].abs()
-    df_dados["MAPE"] = round(df_dados["Erro ABS"].div(df_dados["Previsão"]), 3)
+    df_dados["MAPE"] = df_dados["Erro ABS"].div(df_dados["Previsão"])
     #df_dados.set_index("Periodo", inplace=True)
 
     # Erro Acumulado
-    erro_acumulado = df_dados["Erro"].sum(skipna=True)
+    erro_acumulado = round(df_dados["Erro"].sum(skipna=True), 3)
     # MAD
-    mad = df_dados["Erro ABS"].mean(skipna=True)
+    mad = round(df_dados["Erro ABS"].mean(skipna=True), 3)
     # MAPE
     mape = round(df_dados["MAPE"].sum(skipna=True)/(df_dados["Previsão"].count() - 1), 3)
 
@@ -27,6 +27,7 @@ def gerar_df(caminho, n):
                        "MAD": mad,
                        "MAPE": mape,
                        "Lista_Colunas": lista_nome_colunas}
+
 
 
     ## DEBUG

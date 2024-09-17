@@ -14,6 +14,8 @@ class TabelaFrame(tkinter.ttk.Treeview):
 
     def set_tabela(self, df, dici):
 
+        df = df.round(3) # Round antes de colocar na tabela
+
         # Setar nome das colunas com base no df
         self.configure(columns = dici["Lista_Colunas"], show= "headings")
         self.column("#0", stretch=False)
