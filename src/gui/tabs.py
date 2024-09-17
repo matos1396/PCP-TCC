@@ -9,7 +9,7 @@ class Tabview(customtkinter.CTkTabview):
 
         # Tabview Configuração
         self.configure(width=250)
-        self.grid(row=0, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        self.grid(row=0, column=1, padx=(20, 20), pady=(20, 0), sticky="nsew")
         self.add("Gráfico Demanda Real x Prevista")
         self.add("Gráfico Erro")
         self.add("Resultados - Valores")

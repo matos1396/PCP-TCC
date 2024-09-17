@@ -18,12 +18,17 @@ class TabelaFrame(tkinter.ttk.Treeview):
         self.configure(columns = dici["Lista_Colunas"], show= "headings")
         self.column("#0", stretch=False)
 
+        n_col = len(df.columns) # FIX
+        #print(self.winfo_width()/n_col)
+        col_width = round(self.winfo_width()/n_col) # FIX
+
         # Criando as colunas
         for column in df.columns:
             self.heading(
                 column,
                 text=column
             )
+            self.column(column, width=col_width) # FIX
 
         df = df.fillna('') # Para a visualização apenas
         # Inserir os dados
@@ -35,3 +40,4 @@ class TabelaFrame(tkinter.ttk.Treeview):
 
             for column in row.index:
                 self.set(index, column, row[column])
+

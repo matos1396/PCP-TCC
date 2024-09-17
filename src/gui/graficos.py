@@ -9,7 +9,8 @@ from matplotlib.backend_bases import key_press_handler
 
 
 class Grafico():
-    def __init__(self, master, fig,):
+    def __init__(self, master, fig):
+
 
         # Renderizar Gráfico
         self.canvas = FigureCanvasTkAgg(fig, master=master)
@@ -66,7 +67,7 @@ def gerar_fig_erro(df, dici):
 
     ax.set_title("Demanda Real vs. Demanda Prevista")
     ax.set_xlabel("Período")
-    ax.set_ylabel("Demanda")
+    ax.set_ylabel("Erro")
     ax.legend()
 
     return fig

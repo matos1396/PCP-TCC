@@ -32,7 +32,7 @@ def gerar_df(caminho, n):
     ## DEBUG
     # print(n)
     # print(caminho)
-    print(df_dados)
-    print(erro_acumulado, mad, mape)
+    # print(df_dados)
+    # print(erro_acumulado, mad, mape)
 
     return dici_resultados, df_dados

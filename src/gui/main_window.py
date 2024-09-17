@@ -33,6 +33,7 @@ class App(customtkinter.CTk):
         # Tabela - Instanciando Limpa
         self.tabela = tabela.TabelaFrame(self.tabview.tab("Resultados - Valores"))
 
+
         # Barra
         self.barra_scroll = customtkinter.CTkScrollbar(self.tabview.tab("Resultados - Valores"), command=self.tabela.yview)
         self.barra_scroll.grid(row=0, column=1, sticky="ns")
@@ -41,12 +42,10 @@ class App(customtkinter.CTk):
 
     def set_resultados(self):
         self.tabela.set_tabela(self.df, self.dici)
-        # self.tabela["show"] = "headings"
-        # self.tabela.grid(sticky="NSEW")
         self.tabview.set_labels(self.dici)
 
         for _idx, row in self.df.iterrows():
-            print(row)
+            # print(row)
             self.db.inserir_data(
                 """
                 INSERT INTO resultados_maxim (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
