@@ -13,8 +13,13 @@ class Tabview(customtkinter.CTkTabview):
         self.add("Gráfico Demanda Real x Prevista")
         self.add("Gráfico Erro")
         self.add("Resultados - Valores")
+        self.add("Gráfico Demanda Real x Prevista - MME")
+        self.add("Gráfico Erro - MME")
+
         self.tab("Gráfico Demanda Real x Prevista").grid_columnconfigure(0, weight=1)
+        self.tab("Gráfico Demanda Real x Prevista - MME").grid_columnconfigure(0, weight=1)
         self.tab("Gráfico Erro").grid_columnconfigure(0, weight=1)
+        self.tab("Gráfico Erro - MME").grid_columnconfigure(0, weight=1)
         self.tab("Resultados - Valores").grid_columnconfigure(0, weight=1)
 
         # Label resultados

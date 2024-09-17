@@ -31,7 +31,7 @@ db.criar_tabela(query1)
 
 # Tabela - Resultados
 query2 = """
-CREATE TABLE IF NOT EXISTS resultados_maxim (
+CREATE TABLE IF NOT EXISTS resultados_maxim_MMS (
     periodo int PRIMARY KEY,
     demanda_real float,
     previsao_media_movel float,
@@ -41,6 +41,19 @@ CREATE TABLE IF NOT EXISTS resultados_maxim (
 );
 """
 db.criar_tabela(query2)
+
+query3 = """
+CREATE TABLE IF NOT EXISTS resultados_maxim_MME (
+    periodo int PRIMARY KEY,
+    demanda_real float,
+    previsao_media_movel float,
+    erro float,
+    erro_abs float,
+    mape_previsao float
+);
+"""
+db.criar_tabela(query3)
+
 
 # Arquivo input teste para o db
 dados_csv = ler_arquivo.carrega_csv("dados_csv.csv")

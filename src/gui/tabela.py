@@ -12,7 +12,7 @@ class TabelaFrame(tkinter.ttk.Treeview):
         self.grid(column=0, row=0, padx=20, sticky="nsew")
 
 
-    def set_tabela(self, df, dici):
+    def set_tabela_media_simples(self, df, dici):
 
         df = df.round(3) # Round antes de colocar na tabela
 

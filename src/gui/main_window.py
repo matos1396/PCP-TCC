@@ -9,8 +9,8 @@ class App(customtkinter.CTk):
         self.db = db
         self.resultados = None
         self.path_dados = None
-        self.dici = None
-        self.df = None
+        self.dici = {}
+        self.df_lista = []
         self.grafico = None
         self.grafico2 = None
 
@@ -41,14 +41,14 @@ class App(customtkinter.CTk):
 
 
     def set_resultados(self):
-        self.tabela.set_tabela(self.df, self.dici)
-        self.tabview.set_labels(self.dici)
+        self.tabela.set_tabela_media_simples(self.df_lista[0], self.dici["dici_media_movel"])
+        self.tabview.set_labels(self.dici["dici_media_movel"])
 
-        for _idx, row in self.df.iterrows():
+        for _idx, row in self.df_lista[0].iterrows():
             # print(row)
             self.db.inserir_data(
                 """
-                INSERT INTO resultados_maxim (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
+                INSERT INTO resultados_maxim_MMS (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
                 VALUES (?,?,?,?,?,?)
                 """,
                 (row.loc["Periodo"],
@@ -57,22 +57,40 @@ class App(customtkinter.CTk):
                 row.loc["Erro"],
                 row.loc["Erro ABS"],
                 row.loc["MAPE"]),
-                "resultados_maxim"
+                "resultados_maxim_MMS"
             )
 
-        # x = self.db.query_data("SELECT * FROM resultados_maxim")
 
-        # for row in x:
-        #     print(row)
+        for _idx, row in self.df_lista[1].iterrows():
+            # print(row)
+            self.db.inserir_data(
+                """
+                INSERT INTO resultados_maxim_MME (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
+                VALUES (?,?,?,?,?,?)
+                """,
+                (row.loc["Periodo"],
+                row.loc["Maxim"],
+                row.loc["Previsão"],
+                row.loc["Erro"],
+                row.loc["Erro ABS"],
+                row.loc["MAPE"]),
+                "resultados_maxim_MME"
+            )
 
 
-        figura = graficos.gerar_fig_demanda(self.df)
-        figura2 = graficos.gerar_fig_erro(self.df, self.dici)
+        figura = graficos.gerar_fig_demanda(self.df_lista[0])
+        figura2 = graficos.gerar_fig_erro(self.df_lista[0], self.dici["dici_media_movel"])
+        figura3 = graficos.gerar_fig_demanda(self.df_lista[1])
+        figura4 = graficos.gerar_fig_erro(self.df_lista[1], self.dici["dici_expo_movel"])
 
         if self.grafico == None:
             self.grafico = graficos.Grafico(self.tabview.tab("Gráfico Demanda Real x Prevista"), figura)
             self.grafico2 = graficos.Grafico(self.tabview.tab("Gráfico Erro"), figura2)
+            self.grafico3 = graficos.Grafico(self.tabview.tab("Gráfico Demanda Real x Prevista - MME"), figura3)
+            self.grafico4 = graficos.Grafico(self.tabview.tab("Gráfico Erro - MME"), figura4)
 
         else:
             self.grafico.update_grafico(self.tabview.tab("Gráfico Demanda Real x Prevista"), figura)
             self.grafico2.update_grafico(self.tabview.tab("Gráfico Erro"), figura2)
+            self.grafico3.update_grafico(self.tabview.tab("Gráfico Demanda Real x Prevista - MME"), figura3)
+            self.grafico4.update_grafico(self.tabview.tab("Gráfico Erro - MME"), figura4)

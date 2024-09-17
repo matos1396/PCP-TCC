@@ -1,6 +1,7 @@
 import customtkinter
 import tkinter
 from src.dados import gerar_previsao
+from src.leitura_e_escrita.ler_arquivo import carrega_csv
 
 class BarraLateral(customtkinter.CTkFrame):
     def __init__(self, master):
@@ -39,6 +40,13 @@ class BarraLateral(customtkinter.CTkFrame):
 
     def botao_carregar_dados(self):
         self.master.path_dados = customtkinter.filedialog.askopenfilename()
+
     def get_gerar_resultado(self):
-        self.master.dici, self.master.df = gerar_previsao.gerar_df(self.master.path_dados, self.n_valor.get())
+        df_input = carrega_csv(self.master.path_dados)
+        dici_1, df_1 = gerar_previsao.gerar_df_prev_media_movel(df_input, self.n_valor.get())
+        dici_2, df_2 = gerar_previsao.gerar_df_prev_expo_movel(df_input, alfa=0.5) #TODO: adicionar input pro alfa
+
+        self.master.dici = {"dici_media_movel": dici_1,
+                            "dici_expo_movel": dici_2}
+        self.master.df_lista.extend([df_1, df_2])
         self.master.set_resultados()
