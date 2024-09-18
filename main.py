@@ -4,16 +4,27 @@ import tkinter.ttk
 import customtkinter
 from src.gui import main_window
 from src.database.db_utils import setup_db
-
+import sys
+import os
 from src.leitura_e_escrita import ler_arquivo
 
 # Config Inicial
+
+    # Para funcionar com o banco de dados no executável
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
+path_db = resource_path("db/teste.db")
+
 # Aparencia
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("blue")
 
+
 # SETUP Database
-db = setup_db()
+db = setup_db(path_db)
 
 
 ## Main loop

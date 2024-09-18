@@ -6,7 +6,7 @@ class DatabaseManagement():
     def __init__(self, db_name):
         self.db_name = db_name
         self.conn = None
-        self.db_path = Path("db/" + db_name)
+        self.db_path = Path(db_name)
         print(self.db_path)
         self.nome_colunas = {"resultados_maxim_MME": ["periodo", "demanda_real", "previsao_media_movel", "erro", "erro_abs", "mape_previsao"],
                              "resultados_maxim_MMS": ["periodo", "demanda_real", "previsao_media_movel", "erro", "erro_abs", "mape_previsao"]}
@@ -145,8 +145,8 @@ def preparar_dados_para_insercao(df):
 
     return dados
 
-def setup_db():
-    db = DatabaseManagement("teste.db")
+def setup_db(path):
+    db = DatabaseManagement(path)
     db.abrir_conn()
 
     # Tabela - Input
