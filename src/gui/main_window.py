@@ -1,5 +1,6 @@
 import customtkinter
 from src.gui import barra_lateral, tabela, tabs, graficos
+from src.database import db_utils
 
 # APP
 class App(customtkinter.CTk):
@@ -17,7 +18,7 @@ class App(customtkinter.CTk):
 
         # Configuração da janela principal
         self.title("Média Móvel Simples")
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{1300}x{800}")
 
         # Configuração do grid layout
         self.grid_columnconfigure(1, weight=1)
@@ -31,66 +32,50 @@ class App(customtkinter.CTk):
         self.tabview = tabs.Tabview(self)
 
         # Tabela - Instanciando Limpa
-        self.tabela = tabela.TabelaFrame(self.tabview.tab("Resultados - Valores"))
+        self.tabela_mms = tabela.TabelaFrame(self.tabview.tab_mms.tab("Resultados - Valores"))
+        self.tabela_mme = tabela.TabelaFrame(self.tabview.tab_mme.tab("Resultados - Valores"))
 
 
-        # Barra
-        self.barra_scroll = customtkinter.CTkScrollbar(self.tabview.tab("Resultados - Valores"), command=self.tabela.yview)
-        self.barra_scroll.grid(row=0, column=1, sticky="ns")
-        self.tabela.configure(yscrollcommand=self.barra_scroll.set)
+        # Barras de Scroll tabelas
+        self.barra_scroll1 = customtkinter.CTkScrollbar(self.tabview.tab_mms.tab("Resultados - Valores"), command=self.tabela_mms.yview)
+        self.barra_scroll1.grid(row=0, column=1, sticky="ns")
+        self.tabela_mms.configure(yscrollcommand=self.barra_scroll1.set)
+        self.barra_scroll2 = customtkinter.CTkScrollbar(self.tabview.tab_mme.tab("Resultados - Valores"), command=self.tabela_mme.yview)
+        self.barra_scroll2.grid(row=0, column=1, sticky="ns")
+        self.tabela_mme.configure(yscrollcommand=self.barra_scroll2.set)
 
 
     def set_resultados(self):
-        self.tabela.set_tabela_media_simples(self.df_lista[0], self.dici["dici_media_movel"])
-        self.tabview.set_labels(self.dici["dici_media_movel"])
+        # Setup Tabelas
+        self.tabela_mms.set_tabela_media_simples(self.df_lista[0], self.dici["dici_media_movel"])
+        self.tabela_mme.set_tabela_media_simples(self.df_lista[1], self.dici["dici_expo_movel"])
+        self.tabview.tab_mms.set_df(df = self.df_lista[0])
+        self.tabview.tab_mme.set_df(df = self.df_lista[1])
+        self.tabview.tab_mms.set_labels(self.dici["dici_media_movel"])
+        self.tabview.tab_mme.set_labels(self.dici["dici_expo_movel"])
 
-        for _idx, row in self.df_lista[0].iterrows():
-            # print(row)
-            self.db.inserir_data(
-                """
-                INSERT INTO resultados_maxim_MMS (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
-                VALUES (?,?,?,?,?,?)
-                """,
-                (row.loc["Periodo"],
-                row.loc["Maxim"],
-                row.loc["Previsão"],
-                row.loc["Erro"],
-                row.loc["Erro ABS"],
-                row.loc["MAPE"]),
-                "resultados_maxim_MMS"
-            )
+        # Salvando resultados no banco de dados
+        dados_para_db, colunas_para_db = db_utils.preparar_dados_para_insercao(self.df_lista[0])
+        self.db.inserir_dados_resultados(tabela = "resultados_maxim_MMS", colunas = colunas_para_db, dados = dados_para_db)
 
 
-        for _idx, row in self.df_lista[1].iterrows():
-            # print(row)
-            self.db.inserir_data(
-                """
-                INSERT INTO resultados_maxim_MME (periodo, demanda_real, previsao_media_movel, erro, erro_abs, mape_previsao)
-                VALUES (?,?,?,?,?,?)
-                """,
-                (row.loc["Periodo"],
-                row.loc["Maxim"],
-                row.loc["Previsão"],
-                row.loc["Erro"],
-                row.loc["Erro ABS"],
-                row.loc["MAPE"]),
-                "resultados_maxim_MME"
-            )
-
-
+        # Para os graficos
         figura = graficos.gerar_fig_demanda(self.df_lista[0])
         figura2 = graficos.gerar_fig_erro(self.df_lista[0], self.dici["dici_media_movel"])
         figura3 = graficos.gerar_fig_demanda(self.df_lista[1])
         figura4 = graficos.gerar_fig_erro(self.df_lista[1], self.dici["dici_expo_movel"])
 
         if self.grafico == None:
-            self.grafico = graficos.Grafico(self.tabview.tab("Gráfico Demanda Real x Prevista"), figura)
-            self.grafico2 = graficos.Grafico(self.tabview.tab("Gráfico Erro"), figura2)
-            self.grafico3 = graficos.Grafico(self.tabview.tab("Gráfico Demanda Real x Prevista - MME"), figura3)
-            self.grafico4 = graficos.Grafico(self.tabview.tab("Gráfico Erro - MME"), figura4)
+            self.grafico = graficos.Grafico(self.tabview.tab_mms.tab("Gráfico Demanda Real x Prevista"), figura)
+            self.grafico2 = graficos.Grafico(self.tabview.tab_mms.tab("Gráfico Erro"), figura2)
+            self.grafico3 = graficos.Grafico(self.tabview.tab_mme.tab("Gráfico Demanda Real x Prevista"), figura3)
+            self.grafico4 = graficos.Grafico(self.tabview.tab_mme.tab("Gráfico Erro"), figura4)
 
         else:
-            self.grafico.update_grafico(self.tabview.tab("Gráfico Demanda Real x Prevista"), figura)
-            self.grafico2.update_grafico(self.tabview.tab("Gráfico Erro"), figura2)
-            self.grafico3.update_grafico(self.tabview.tab("Gráfico Demanda Real x Prevista - MME"), figura3)
-            self.grafico4.update_grafico(self.tabview.tab("Gráfico Erro - MME"), figura4)
+            self.grafico.update_grafico(self.tabview.tab_mms.tab("Gráfico Demanda Real x Prevista"), figura)
+            self.grafico2.update_grafico(self.tabview.tab_mms.tab("Gráfico Erro"), figura2)
+            self.grafico3.update_grafico(self.tabview.tab_mme.tab("Gráfico Demanda Real x Prevista"), figura3)
+            self.grafico4.update_grafico(self.tabview.tab_mme.tab("Gráfico Erro"), figura4)
+
+
+

@@ -7,7 +7,6 @@ import tkinter.messagebox
 class TabelaFrame(tkinter.ttk.Treeview):
     def __init__(self, master):
         super().__init__(master)
-
         self.master = master
         self.grid(column=0, row=0, padx=20, sticky="nsew")
 
