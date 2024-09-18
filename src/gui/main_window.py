@@ -55,8 +55,10 @@ class App(customtkinter.CTk):
         self.tabview.tab_mme.set_labels(self.dici["dici_expo_movel"])
 
         # Salvando resultados no banco de dados
-        dados_para_db, colunas_para_db = db_utils.preparar_dados_para_insercao(self.df_lista[0])
-        self.db.inserir_dados_resultados(tabela = "resultados_maxim_MMS", colunas = colunas_para_db, dados = dados_para_db)
+        dados_para_db_1 = db_utils.preparar_dados_para_insercao(self.df_lista[0])
+        dados_para_db_2 = db_utils.preparar_dados_para_insercao(self.df_lista[1])
+        self.db.inserir_dados_resultados(tabela = "resultados_maxim_MMS", dados = dados_para_db_1)
+        self.db.inserir_dados_resultados(tabela = "resultados_maxim_MME", dados = dados_para_db_2)
 
 
         # Para os graficos

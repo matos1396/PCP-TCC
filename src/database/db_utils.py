@@ -8,6 +8,8 @@ class DatabaseManagement():
         self.conn = None
         self.db_path = Path("db/" + db_name)
         print(self.db_path)
+        self.nome_colunas = {"resultados_maxim_MME": ["periodo", "demanda_real", "previsao_media_movel", "erro", "erro_abs", "mape_previsao"],
+                             "resultados_maxim_MMS": ["periodo", "demanda_real", "previsao_media_movel", "erro", "erro_abs", "mape_previsao"]}
 
     def check_db_existe(self):
         db_path = os.path.exists(self.db_path)
@@ -38,14 +40,14 @@ class DatabaseManagement():
 
     def inserir_data(self, insert_sql, data, nome_tabela = None):
         try:
-            if self.check_if_exists(data[0], nome_tabela) == False:
-                c = self.conn.cursor()
-                c.execute(insert_sql, data)
-                self.conn.commit()
-                print("Dados inseridos com sucesso")
-                print(data)
-            else:
-                print("Dados já foram inseridos")
+            # if self.check_if_exists(data[0], nome_tabela) == False:
+            c = self.conn.cursor()
+            c.execute(insert_sql, data)
+            self.conn.commit()
+            print("Dados inseridos com sucesso")
+            print(data)
+
+            #    print("Dados já foram inseridos")
         except sqlite3.Error as e:
             print(f"Erro ao inserir dados: {e}")
 
@@ -69,15 +71,15 @@ class DatabaseManagement():
         except sqlite3.Error as e:
             print(f"Erro ao deletar dados: {e}")
 
-    def check_if_exists(self, periodo, nome_tabela):
-        if nome_tabela == None:
-            return False
-        if self.query_data(f"SELECT {periodo} FROM {nome_tabela}") != None:
-            # print(periodo)
-            # print(nome_tabela)
-            return True
-        else:
-            return False
+    # def check_if_exists(self, periodo, nome_tabela):
+    #     if nome_tabela == None:
+    #         return False
+    #     if self.query_data(f"SELECT {periodo} FROM {nome_tabela}") != None:
+    #         # print(periodo)
+    #         # print(nome_tabela)
+    #         return True
+    #     else:
+    #         return False
 
 
     def insert_input(self, dados_input):
@@ -94,18 +96,26 @@ class DatabaseManagement():
                 row.Maxim)
             )
 
-    def inserir_dados_resultados(self, tabela, colunas, dados):
+    def inserir_dados_resultados(self, tabela, dados):
         """
         Insere dados em uma tabela específica no banco de dados.
 
         Args:
         tabela (str): O nome da tabela onde os dados serão inseridos.
-        colunas (list): Uma lista com os nomes das colunas onde os dados serão inseridos.
         dados (list of tuples): Uma lista de tuplas com os valores correspondentes às colunas.
         """
-        # string SQL dinamica
-        colunas_str = ', '.join(colunas)
-        placeholders = ', '.join(['?'] * len(colunas))  # Cria tantos "?" quanto o número de colunas
+
+        if tabela == "resultados_maxim_MMS":
+            colunas_str = ', '.join(self.nome_colunas["resultados_maxim_MMS"])
+            placeholders = ', '.join(['?'] * len(self.nome_colunas["resultados_maxim_MMS"])) # Cria tantos "?" quanto o número de colunas
+
+
+        if tabela == "resultados_maxim_MME":
+            colunas_str = ', '.join(self.nome_colunas["resultados_maxim_MMS"])
+            placeholders = ', '.join(['?'] * len(self.nome_colunas["resultados_maxim_MMS"])) # Cria tantos "?" quanto o número de colunas
+
+        print()
+        # SQL querry dinamica
         insert_sql = f"INSERT OR IGNORE INTO {tabela} ({colunas_str}) VALUES ({placeholders})"
 
         # Iterar pelos dados e inserir na tabela
@@ -133,7 +143,7 @@ def preparar_dados_para_insercao(df):
     for _, row in df.iterrows():
         dados.append(tuple(row[coluna] for coluna in colunas))  # Extrai os valores das colunas e os adiciona como tupla
 
-    return dados, colunas
+    return dados
 
 def setup_db():
     db = DatabaseManagement("teste.db")
